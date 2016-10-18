@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<param name="Threshold" value="debug" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{dd/MM/yyyy HH:mm:ss,SSS} %-5p %-20c{1} %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="organizacao" class="org.apache.log4j.FileAppender">
+		<param name="File" value="D:/OrganizadorMidias/organizacao.log" />
+		<param name="Append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{dd/MM/yyyy HH:mm:ss,SSS} %-5p %-20c{1} %m%n" />
+		</layout>
+	</appender>
+
+	<category name="br.com.ljbm">
+		<priority value="debug" />
+	</category>
+
+	<root>
+		<priority value="info" />
+		<appender-ref ref="organizacao" />
+		<appender-ref ref="console" />
+	</root>
+
+</log4j:configuration>
