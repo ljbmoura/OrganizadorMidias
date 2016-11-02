@@ -25,10 +25,16 @@ public class ArvoreArquivos {
 	}
 
 	public static void main(String[] args) throws IOException {
-//		String[] argsAux = {"G:\\a\\copiasNuvem\\luc\\Dropbox\\+Espaço\\Camera","*.jpg", "G:\\aOrganizadorMidias\\fotos"};
-//		String[] argsAux = {"G:\\a\\copiasNuvem\\luc\\Dropbox\\+Espaço\\Camera","*.mp4", "G:\\aOrganizadorMidias\\videos"};
 		
-		String[] argsAux = {"G:\\bebe\\fotos\\antigas n8","*.jpg", "G:\\aOrganizadorMidias\\fotos"};
+//		String[] argsAux = {"G:\\a\\copiasNuvem","*.jpg", "H:\\degoo\\fotos"};
+//		String[] argsAux = {"G:\\a\\copiasNuvem","*.mp4", "H:\\degoo\\videos"};
+//		String[] argsAux = {"G:\\a - pre isadora\\fotos\\ace","*.jpg", "H:\\degoo\\fotos"};
+//		String[] argsAux = {"G:\\a - pre isadora\\fotos\\ace","*.mp4", "H:\\degoo\\videos"};
+//		String[] argsAux = {"G:\\a - pre isadora\\fotos\\camera sony luc","*.jpg", "H:\\degoo\\fotos"};
+//		String[] argsAux = {"G:\\a - pre isadora\\fotos\\N8","*.jpg", "H:\\degoo\\fotos"};
+//		String[] argsAux = {"G:\\a - pre isadora\\fotos\\Album Databook","*.jpg", "H:\\degoo\\fotos"};
+		String[] argsAux = {"G:\\aOrganizadorMidias\\fotos","*.jpg", "H:\\degoo\\fotos"};
+		
 		
 		args = argsAux;
 		
@@ -46,7 +52,7 @@ public class ArvoreArquivos {
 		catalogador.done();
 		Map<String, Path> catalogo = catalogador.getMapa();
 
-//	    organizaPorAnoMes(catalogo, dirDestino.toFile());
+	    organizaPorAnoMes(catalogo, dirDestino.toFile());
 		
 		File[] pastasDestino = new File[1];
 		//pastasDestino[0] = Paths.get("H://aOrganizadorMidias//videos").toFile();
