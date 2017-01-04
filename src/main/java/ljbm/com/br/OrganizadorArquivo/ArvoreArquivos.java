@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -27,13 +28,31 @@ public class ArvoreArquivos {
 	public static void main(String[] args) throws IOException {
 		
 //		String[] argsAux = {"G:\\a\\copiasNuvem","*.jpg", "H:\\degoo\\fotos"};
-//		String[] argsAux = {"G:\\a\\copiasNuvem","*.mp4", "H:\\degoo\\videos"};
+//		String[] argsAux = {"G:\\a\\copiasNuvem","*.mp4", "H:\\degoo.luca\\videos"};
 //		String[] argsAux = {"G:\\a - pre isadora\\fotos\\ace","*.jpg", "H:\\degoo\\fotos"};
-//		String[] argsAux = {"G:\\a - pre isadora\\fotos\\ace","*.mp4", "H:\\degoo\\videos"};
+//		String[] argsAux = {"G:\\a - pre isadora\\fotos\\ace","*.mp4", "H:\\degoo.luca\\videos"};
 //		String[] argsAux = {"G:\\a - pre isadora\\fotos\\camera sony luc","*.jpg", "H:\\degoo\\fotos"};
 //		String[] argsAux = {"G:\\a - pre isadora\\fotos\\N8","*.jpg", "H:\\degoo\\fotos"};
 //		String[] argsAux = {"G:\\a - pre isadora\\fotos\\Album Databook","*.jpg", "H:\\degoo\\fotos"};
-		String[] argsAux = {"G:\\aOrganizadorMidias\\fotos","*.jpg", "H:\\degoo\\fotos"};
+//		String[] argsAux = {"G:\\aOrganizadorMidias\\fotos","*.jpg", "H:\\degoo\\fotos"};
+//		String[] argsAux = {"H:\\fotos e videos revisados\\s417-24nov","*.jpg", "H:\\degoo\\fotos"};
+//		String[] argsAux = {"H:\\fotos e videos revisados\\s417-24nov","*.mp4", "H:\\degoo.luca\\videos"};
+//		String[] argsAux = {"H:\\fotos e videos revisados\\s416nov2016","*.jpg", "H:\\degoo\\fotos"};
+//		String[] argsAux = {"H:\\fotos e videos revisados\\s416nov2016","*.mp4", "H:\\degoo.luca\\videos"};
+		
+//		String[] argsAux = {"H:\\fotos e videos revisados\\xperia16nov2016\\100ANDRO","*.jpg", "H:\\degoo\\fotos"};
+//		String[] argsAux = {"H:\\fotos e videos revisados\\xperia16nov2016\\100ANDRO","*.mp4", "H:\\degoo.luca\\videos"};
+		
+		Map <String,  String> tipoDest = new HashMap<String,  String>(0);
+		tipoDest.put("jpg", "fotos");
+		tipoDest.put("mp4", "videos");
+		
+//		String[] argsAux = {"G:\\aOrganizadorMidias\\" +tipoDest.get("jpg"),"*.jpg", "H:\\aOrganizadorMidias\\"+tipoDest.get("jpg")};
+		
+//		String[] argsAux = {"H:\\fotos e videos revisados\\" +tipoDest.get("jpg"),"*.jpg", "G:\\aMidiasOrganizadas\\"+tipoDest.get("jpg")};
+//		String[] argsAux = {"H:\\fotos e videos revisados\\","*.mp4", "G:\\aMidiasOrganizadas\\"+tipoDest.get("mp4")};
+		
+		String[] argsAux = {"G:\\aOrganizadorMidias\\fotosC","*.jpg", "G:\\aMidiasOrganizadas\\"+tipoDest.get("jpg")};
 		
 		
 		args = argsAux;
@@ -44,15 +63,17 @@ public class ArvoreArquivos {
 		Path dirOrigem = Paths.get(args[0]);
 		String pattern = args[1];
 		Path dirDestino = Paths.get(args[2]);
+		Path dirDestinoBck = Paths.get(args[2] + ".dup");
 
 		LOG.info(String.format("Origem '%s', filtro '%s', destino '%s'",
 				args[0], args[1], args[2]));
+		LOG.info(String.format("Destino Duplicados '%s'", args[2] + ".dup"));
 		Finder catalogador = new Finder(pattern);
 		Files.walkFileTree(dirOrigem, catalogador);
 		catalogador.done();
 		Map<String, Path> catalogo = catalogador.getMapa();
 
-	    organizaPorAnoMes(catalogo, dirDestino.toFile());
+//	    organizaPorAnoMes(catalogo, dirDestino.toFile(), dirDestinoBck.toFile());
 		
 		File[] pastasDestino = new File[1];
 		//pastasDestino[0] = Paths.get("H://aOrganizadorMidias//videos").toFile();
@@ -75,10 +96,11 @@ public class ArvoreArquivos {
 	/**
 	 * @param catalogo
 	 * @param pastaDestino
+	 * @param pastaDestinoBck 
 	 * @throws IOException
 	 */
 	private static void organizaPorAnoMes(Map<String, Path> catalogo,
-			File pastaDestino) throws IOException {
+			File pastaDestino, File pastaDestinoBck) throws IOException {	
 
 		// padrão nokia: 2015-06-07-1105
 		// padrão s4: 20150603_203140 ou 20150428_161032_Richtone(HDR) ou
@@ -156,9 +178,27 @@ public class ArvoreArquivos {
 				LOG.debug(String.format("Arquivo %s criado",
 						arquivoDestino.getAbsolutePath()));
 			} catch (java.nio.file.FileAlreadyExistsException e) {
+				
 				LOG.warn(String.format("arquivo %s já existe",
 						arquivoDestino.getAbsolutePath()));
 				contJaExiste++;
+				
+				Path dirDestinoBck = Paths.get(pastaDestinoBck.getAbsolutePath() + "\\"
+						+ subPastaAnoMes);
+				if (!Files.exists(dirDestinoBck)) {
+					dirDestinoBck = Files.createDirectory(dirDestinoBck);
+					LOG.info(String.format("pasta %s criada.",
+							dirDestinoBck.toString()));
+				}
+				File arquivoDestinoBck = new File(dirDestinoBck.toString() + "\\"
+						+ nomeArquivo);
+				try {
+					Files.copy(arquivoOrigem.toPath(), arquivoDestinoBck.toPath());
+				} catch (Exception oe) {
+				LOG.error(String.format(
+						"arquivo duplicado %s não copiado: " + oe.getMessage(),
+						arquivoDestinoBck.getAbsolutePath()));
+				}
 			} catch (Exception oe) {
 				LOG.error(String.format(
 						"arquivo %s não copiado: " + oe.getMessage(),
